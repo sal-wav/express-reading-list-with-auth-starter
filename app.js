@@ -4,13 +4,23 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const bookRoutes = require('./routes/book');
 const userRoutes = require('./routes/users');
+const session = require("express-session");
+const { sessionSecret } = require("./config");
 
 
 const app = express();
 
 app.set('view engine', 'pug');
 app.use(morgan('dev'));
-app.use(cookieParser());
+app.use(cookieParser(sessionSecret));
+app.use(
+	session({
+		name: "reading-list.sid",
+		secret: sessionSecret,
+		resave: false,
+		saveUninitialized: false,
+	})
+);
 app.use(express.urlencoded({ extended: false }));
 app.use(bookRoutes);
 app.use(userRoutes);
